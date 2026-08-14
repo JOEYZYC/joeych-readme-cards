@@ -37,7 +37,7 @@ Rules: colors are emitted through each handler's theme token object only. `accen
 | Label | 10 | 700 | Pills and row labels |
 | Overline | 9 | 700 | `//` section labels |
 
-Primary stack: `"Cascadia Mono", "Noto Sans Mono CJK SC", "Microsoft YaHei UI", Consolas, monospace`. This retains the terminal cadence while allowing Chinese glyphs to render without tofu or fallback metric drift. English technical terms stay in the same mono stack.
+Primary stack: `'Courier New', Consolas, monospace`. This restores the original terminal cadence across all SVG cards and the preview page.
 
 ## 4. Spacing & Layout
 
@@ -50,7 +50,7 @@ Desktop artboards are exactly 900 units wide. Mobile artboards are exactly 360 u
 - **Variants**: desktop and mobile header/footer with chrome; desktop and mobile section card; desktop and mobile banner inset.
 - **Spacing**: desktop 24/28-unit gutter, mobile 20-unit gutter, 3-unit rail, 32/34-unit bar.
 - **States**: light and dark theme, each with desktop and mobile artboards.
-- **Accessibility**: `<title>` and `<desc>` name every emitted SVG; text uses the CJK-safe stack and color pairings target AA contrast.
+- **Accessibility**: `<title>` and `<desc>` name every emitted SVG; text uses the shared terminal stack and color pairings target AA contrast.
 - **Motion**: title typing/cursor only; reduced-motion users receive the final static line.
 
 ### Section Label and Divider
@@ -65,8 +65,8 @@ Desktop artboards are exactly 900 units wide. Mobile artboards are exactly 360 u
 - **Accessibility**: no proficiency or availability claims; anchors also have an external Markdown link equivalent.
 
 ### Availability State
-- **Structure**: warning-colored value `不可用` and a clear Chinese reason beneath the GitHub stat rows.
-- **States**: live data available, API unavailable, or deterministic static snapshot (`静态快照不展示实时 GitHub 数据`) with no network fetch.
+- **Structure**: warning-colored value `Unavailable` and a clear English reason beneath the GitHub stat rows.
+- **States**: live data available, API unavailable, or deterministic static snapshot (`Static preview omits live GitHub data`) with no network fetch.
 - **Accessibility**: status is expressed in text, not color alone.
 
 ### Responsive Asset Selection
@@ -86,7 +86,7 @@ Strategy: **mixed, border-led terminal material**. A left-to-right title-bar gra
 
 ### Constraints
 - WCAG 2.2 AA contrast target for text and labels.
-- Chinese copy uses explicit line segmentation in SVG to avoid orphaned particles and relies on a CJK-safe mono fallback.
+- English copy uses explicit line segmentation in SVG to protect the fixed card geometry.
 - Every SVG has a title and description, and every footer destination is duplicated as a Markdown link in the profile README because embedded SVG links may be disabled by GitHub.
 - Reduced motion is honored inside the SVG stylesheet.
 
