@@ -7,6 +7,8 @@ import footer from "../api/footer.js";
 import banner from "../api/banner.js";
 
 const handlers = { header, profile, skills, footer, banner };
+const ORIGINAL_FONT = "'Courier New', Consolas, monospace";
+const BARE_XML_AMPERSAND = /&(?!amp;|lt;|gt;|quot;|apos;|#\d+;|#x[0-9A-Fa-f]+;)/;
 const dimensions = {
   desktop: { header: [900, 196], profile: [900, 292], skills: [900, 305], footer: [900, 92], banner: [900, 44] },
   mobile: { header: [360, 238], profile: [360, 500], skills: [360, 490], footer: [360, 184], banner: [360, 72] },
@@ -34,6 +36,10 @@ for (const [layout, cards] of Object.entries(dimensions)) {
         assert.match(svg, new RegExp(`<svg[^>]*width="${width}" height="${height}"`));
         assert.match(svg, /<title id="title">/);
         assert.match(svg, /<desc id="desc">/);
+        assert.match(svg, new RegExp(`font-family="${ORIGINAL_FONT}"`));
+        assert.doesNotMatch(svg, /Cascadia Mono|Noto Sans Mono CJK SC|Microsoft YaHei UI/);
+        assert.doesNotMatch(svg, BARE_XML_AMPERSAND);
+        assert.doesNotMatch(svg, /[\u3400-\u9fff]/u);
         assert.doesNotMatch(svg, /Hazy019|Kyrell Santillan|OPEN FOR WORK|\bOFW\b/);
       });
     }
@@ -57,6 +63,15 @@ for (const [layout, query] of [["desktop", ""], ["mobile", "&layout=mobile"]]) {
   });
 }
 
+test("header preserves the baseline desktop and mobile outer frames", async () => {
+  const desktop = await (await header(new Request("https://test.local/api/header?theme=dark&preview=1"))).text();
+  const mobile = await (await header(new Request("https://test.local/api/header?theme=dark&preview=1&layout=mobile"))).text();
+  assert.match(desktop, /<rect width="3" height="196" fill="#39d353" opacity="\.7"\/>/);
+  assert.match(desktop, /<path d="M0 \.5H900M899\.5 0V196M0 195\.5H900" stroke="#30363d" stroke-width="1" fill="none"\/>/);
+  assert.match(mobile, /<rect width="3" height="238" fill="#39d353" opacity="\.7"\/>/);
+  assert.match(mobile, /<path d="M0 \.5H360M359\.5 0V238M0 237\.5H360" stroke="#30363d" stroke-width="1" fill="none"\/>/);
+});
+
 test("profile light inset uses the documented warm-paper token", async () => {
   const svg = await (await profile(new Request("https://test.local/api/profile?theme=light&preview=1"))).text();
   assert.match(svg, /<rect x="456" width="444" height="292" fill="#f0ead6"/);
@@ -76,7 +91,8 @@ test("profile live path counts only original repositories and orders languages",
     assert.match(svg, />4</);
     assert.match(svg, />16</);
     assert.match(svg, />JavaScript · Python</);
-    assert.match(svg, /仅统计非 fork 的 owner 仓库/);
+    assert.match(svg, /Owner repos only; forks excluded/);
+    assert.match(svg, /<text x="480" y="235" font-family="'Courier New', Consolas, monospace" font-size="10" fill="#7d8590">Owner repos only; forks excluded<\/text>/);
     assert.match(svg, new RegExp(`UTC ${new Date().getUTCFullYear()}`));
     assert.doesNotMatch(svg, />9999</);
   } finally {
@@ -90,8 +106,8 @@ for (const [name, fetchImpl] of [["HTTP failure", async () => new Response("unav
     globalThis.fetch = fetchImpl;
     try {
       const svg = await (await profile(new Request("https://test.local/api/profile?theme=dark"))).text();
-      assert.match(svg, /GitHub REST 暂不可用/);
-      assert.match(svg, /不可用/);
+      assert.match(svg, /GitHub REST unavailable; no estimates shown/);
+      assert.match(svg, /Unavailable/);
       assert.doesNotMatch(svg, />\d+</);
     } finally {
       globalThis.fetch = originalFetch;
@@ -103,10 +119,10 @@ for (const query of ["", "&layout=mobile"]) {
   test(`profile preview${query ? " mobile" : " desktop"} never invents live statistics`, async () => {
     const response = await profile(new Request(`https://test.local/api/profile?theme=light&preview=1${query}`));
     const svg = await response.text();
-    assert.match(svg, /原创仓库/);
-    assert.match(svg, /不可用/);
-    assert.match(svg, /静态快照不展示实时 GitHub 数据/);
-    assert.match(svg, /语言统计不可用/);
+    assert.match(svg, /Original repos/);
+    assert.match(svg, /Unavailable/);
+    assert.match(svg, /Static preview omits live GitHub data/);
+    assert.match(svg, /Language data unavailable/);
     assert.doesNotMatch(svg, />8</);
     assert.doesNotMatch(svg, />12</);
     assert.doesNotMatch(svg, /C\+\+ · Python · C/);
@@ -123,7 +139,7 @@ test("profile preview desktop and mobile never invoke fetch", async () => {
   try {
     for (const query of ["", "&layout=mobile"]) {
       const svg = await (await profile(new Request(`https://test.local/api/profile?theme=light&preview=1${query}`))).text();
-      assert.match(svg, /静态快照不展示实时 GitHub 数据/);
+      assert.match(svg, /Static preview omits live GitHub data/);
       assert.doesNotMatch(svg, />\d+</);
     }
     assert.equal(calls, 0);
@@ -152,6 +168,15 @@ test("mobile profile keeps the first stat row clear of its heading and divider",
   assert.match(svg, /<circle cx="24" cy="317" r="3.5"/);
   assert.match(svg, /<text x="38" y="322"/);
 });
+
+for (const theme of ["light", "dark"]) {
+  test(`mobile profile ${theme} body copy fits the 320-unit Courier gutter`, async () => {
+    const svg = await (await profile(new Request(`https://test.local/api/profile?theme=${theme}&preview=1&layout=mobile`))).text();
+    const lines = [...svg.matchAll(/<text x="20" y="(?:62|91|114|151|174)" font-family="'Courier New', Consolas, monospace" font-size="(\d+)"[^>]*>([^<]+)<\/text>/g)];
+    assert.equal(lines.length, 5);
+    for (const [, fontSize, text] of lines) assert.ok(20 + text.length * Number(fontSize) * 0.6 <= 340, `${text} exceeds the mobile content gutter`);
+  });
+}
 
 test("mobile skills keeps the final technology pill above the bottom clearance", async () => {
   const svg = await (await skills(new Request("https://test.local/api/skills?theme=dark&preview=1&layout=mobile"))).text();
