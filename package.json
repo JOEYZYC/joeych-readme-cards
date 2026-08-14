@@ -1,0 +1,14 @@
+{
+  "name": "joeyzyc-terminal-cards",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "packageManager": "npm@12.0.2",
+  "scripts": {
+    "preview": "node scripts/generate-preview.mjs",
+    "preview:serve": "node scripts/serve-preview.mjs",
+    "test": "node --test",
+    "scan:identity": "node scripts/check-runtime-identity.mjs",
+    "check:diff": "git diff --check"
+  }
+}
