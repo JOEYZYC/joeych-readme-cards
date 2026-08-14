@@ -1,0 +1,21 @@
+{
+  "$schema": "file:///D:/Dev/ProjectTools/devtools.schema.json",
+  "schemaVersion": 1,
+  "profile": "node-24",
+  "workingDirectory": ".",
+  "packageManager": "npm@12.0.2",
+  "tools": {
+    "node": {
+      "version": "24.19.0",
+      "path": "D:/Dev/Toolchains/JavaScript/Node/24.19.0/node.exe"
+    }
+  },
+  "requiredFiles": ["package.json", "scripts/generate-preview.mjs"],
+  "commands": {
+    "test": ["npm", "test"],
+    "preview": ["npm", "run", "preview"],
+    "preview:serve": ["npm", "run", "preview:serve"],
+    "scan:identity": ["npm", "run", "scan:identity"],
+    "check:diff": ["npm", "run", "check:diff"]
+  }
+}
