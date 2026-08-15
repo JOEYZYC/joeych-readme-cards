@@ -7,7 +7,10 @@
   "scripts": {
     "preview": "node scripts/generate-preview.mjs",
     "preview:serve": "node scripts/serve-preview.mjs",
+    "stats:refresh": "node scripts/refresh-github-stats.mjs",
+    "refresh": "node scripts/refresh-preview.mjs",
     "test": "node --test",
+    "check:profile-assets": "node scripts/check-profile-assets.mjs ../JOEYZYC/README.md",
     "scan:identity": "node scripts/check-runtime-identity.mjs",
     "check:diff": "git diff --check"
   }
