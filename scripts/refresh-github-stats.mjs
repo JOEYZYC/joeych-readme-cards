@@ -36,30 +36,14 @@ export async function refreshGithubStats({
   const targetDirectory = dirname(targetPath);
   const temporaryPath = join(targetDirectory, `.${basename(targetPath)}.${process.pid}.${randomUUID()}.tmp`);
   await fileSystem.mkdir(targetDirectory, { recursive: true });
-  let temporaryFileOwned = false;
-  let primaryError;
   try {
-    temporaryFileOwned = true;
-    try {
-      await fileSystem.writeFile(temporaryPath, bytes, { flag: "wx" });
-    } catch (error) {
-      if (error?.code === "EEXIST") temporaryFileOwned = false;
-      throw error;
-    }
+    await fileSystem.writeFile(temporaryPath, bytes);
     await fileSystem.rename(temporaryPath, targetPath);
-    temporaryFileOwned = false;
-    return { changed: true, snapshot };
   } catch (error) {
-    primaryError = error;
+    await fileSystem.rm(temporaryPath, { force: true }).catch(() => {});
+    throw error;
   }
-  if (temporaryFileOwned) {
-    try {
-      await fileSystem.rm(temporaryPath, { force: true });
-    } catch (cleanupError) {
-      throw new AggregateError([primaryError, cleanupError], primaryError.message, { cause: primaryError });
-    }
-  }
-  throw primaryError;
+  return { changed: true, snapshot };
 }
 
 if (process.argv[1] === fileURLToPath(import.meta.url)) {
