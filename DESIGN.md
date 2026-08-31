@@ -41,7 +41,7 @@ Primary stack: `Consolas, Menlo, 'DejaVu Sans Mono', 'Courier New', monospace`. 
 
 ## 4. Spacing & Layout
 
-Desktop artboards are exactly 900 units wide. Mobile artboards are exactly 360 units wide and selected in the root README at `max-width: 600px`; they are separate compositions, never scaled 900-unit canvases. The 4-unit base is used for micro alignment; desktop gutters are 24 or 28 units and mobile gutters are 20 units. The accent rail is 3 units, terminal bars are 32 or 34 units, and pill height is 20 to 28 units. The desktop profile card holds a 456-unit split; mobile profile is 500 units high with a 19-unit gap after the stats divider, while mobile skills is 490 units high with 15 units below its final pill. Mobile cards become one-column vertical reading flows with 12 to 15-unit body text and fewer secondary labels. SVG artboards scale proportionally only within their matching layout class.
+Desktop artboards are exactly 900 units wide. Mobile artboards are exactly 360 units wide and selected in the root README at `max-width: 600px`; they are separate compositions, never scaled 900-unit canvases. The 4-unit base is used for micro alignment; desktop gutters are 24 or 28 units and mobile gutters are 20 units. The accent rail is 3 units, terminal bars are 32 or 34 units, and pill height is 20 to 28 units. The desktop profile card holds a 456-unit split; mobile profile is 500 units high with a 19-unit gap after the stats divider, while mobile skills is 652 units high with 15 or more units below its final pill. Mobile cards become one-column vertical reading flows with 11 to 15-unit body text and fewer secondary labels. SVG artboards scale proportionally only within their matching layout class.
 
 ## 5. Components
 
