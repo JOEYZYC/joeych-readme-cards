@@ -37,7 +37,7 @@ Rules: colors are emitted through each handler's theme token object only. `accen
 | Label | 10 | 700 | Pills and row labels |
 | Overline | 9 | 700 | `//` section labels |
 
-Primary stack: `'Courier New', Consolas, monospace`. This restores the original terminal cadence across all SVG cards and the preview page.
+Primary stack: `Consolas, Menlo, 'DejaVu Sans Mono', 'Courier New', monospace`. Windows resolves Consolas, macOS Menlo, and Linux DejaVu Sans Mono; each face keeps the terminal cadence near a 0.6em advance (Consolas 0.55em), so fixed geometry holds across platforms. Weights 600 and 900 render as bold on every listed face.
 
 ## 4. Spacing & Layout
 

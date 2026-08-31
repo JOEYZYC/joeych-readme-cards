@@ -6,7 +6,7 @@ export const USERNAME = "JOEYZYC";
 export const PREVIEW_STATS = { repositories: null, stars: null, languages: [], unavailable: true, snapshot: true };
 const UNAVAILABLE_STATS = { repositories: null, stars: null, languages: [], unavailable: true };
 
-const FONT = "'Courier New', Consolas, monospace";
+const FONT = "Consolas, Menlo, 'DejaVu Sans Mono', 'Courier New', monospace";
 const XML_TEXT_ENTITIES = { "&": "&amp;", "<": "&lt;", ">": "&gt;", "\"": "&quot;", "'": "&apos;" };
 const escapeXmlText = (value) => value.replace(/[&<>"']/g, (character) => XML_TEXT_ENTITIES[character]);
 const withAccessibleText = (svg, c) => svg.replace(new RegExp(`(<text\\b[^>]*?)fill="${c.accent}"`, "g"), `$1fill="${c.accentText}"`);

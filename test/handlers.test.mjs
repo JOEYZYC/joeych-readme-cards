@@ -7,7 +7,7 @@ import footer from "../api/footer.js";
 import banner from "../api/banner.js";
 
 const handlers = { header, profile, skills, footer, banner };
-const ORIGINAL_FONT = "'Courier New', Consolas, monospace";
+const ORIGINAL_FONT = "Consolas, Menlo, 'DejaVu Sans Mono', 'Courier New', monospace";
 const BARE_XML_AMPERSAND = /&(?!amp;|lt;|gt;|quot;|apos;|#\d+;|#x[0-9A-Fa-f]+;)/;
 const dimensions = {
   desktop: { header: [900, 196], profile: [900, 292], skills: [900, 305], footer: [900, 92], banner: [900, 44] },
@@ -92,7 +92,7 @@ test("profile live path counts only original repositories and orders languages",
     assert.match(svg, />16</);
     assert.match(svg, />JavaScript · Python</);
     assert.match(svg, /Owner repos only; forks excluded/);
-    assert.match(svg, /<text x="480" y="235" font-family="'Courier New', Consolas, monospace" font-size="10" fill="#7d8590">Owner repos only; forks excluded<\/text>/);
+    assert.match(svg, /<text x="480" y="235" font-family="Consolas, Menlo, 'DejaVu Sans Mono', 'Courier New', monospace" font-size="10" fill="#7d8590">Owner repos only; forks excluded<\/text>/);
     assert.match(svg, new RegExp(`UTC ${new Date().getUTCFullYear()}`));
     assert.doesNotMatch(svg, />9999</);
   } finally {
@@ -172,7 +172,7 @@ test("mobile profile keeps the first stat row clear of its heading and divider",
 for (const theme of ["light", "dark"]) {
   test(`mobile profile ${theme} body copy fits the 320-unit Courier gutter`, async () => {
     const svg = await (await profile(new Request(`https://test.local/api/profile?theme=${theme}&preview=1&layout=mobile`))).text();
-    const lines = [...svg.matchAll(/<text x="20" y="(?:62|91|114|151|174)" font-family="'Courier New', Consolas, monospace" font-size="(\d+)"[^>]*>([^<]+)<\/text>/g)];
+    const lines = [...svg.matchAll(/<text x="20" y="(?:62|91|114|151|174)" font-family="Consolas, Menlo, 'DejaVu Sans Mono', 'Courier New', monospace" font-size="(\d+)"[^>]*>([^<]+)<\/text>/g)];
     assert.equal(lines.length, 5);
     for (const [, fontSize, text] of lines) assert.ok(20 + text.length * Number(fontSize) * 0.6 <= 340, `${text} exceeds the mobile content gutter`);
   });

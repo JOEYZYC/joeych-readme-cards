@@ -1,6 +1,6 @@
 export const config = { runtime: "edge" };
 
-const FONT = "'Courier New', Consolas, monospace";
+const FONT = "Consolas, Menlo, 'DejaVu Sans Mono', 'Courier New', monospace";
 const withAccessibleText = (svg, c) => svg.replace(new RegExp(`(<text\\b[^>]*?)fill="${c.accent}"`, "g"), `$1fill="${c.accentText}"`);
 const withOriginalFrame = (svg, c, mobile) => {
   const frame = mobile

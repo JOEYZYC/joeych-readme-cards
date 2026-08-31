@@ -10,7 +10,7 @@ import { renderProfileSvg } from "../api/profile.js";
 const svgDirectory = new URL("../preview/svgs/", import.meta.url);
 const indexFile = new URL("../preview/index.html", import.meta.url);
 const snapshotFile = new URL("../data/github-stats.json", import.meta.url);
-const ORIGINAL_FONT = "'Courier New', Consolas, monospace";
+const ORIGINAL_FONT = "Consolas, Menlo, 'DejaVu Sans Mono', 'Courier New', monospace";
 const RETIRED_FONTS = /Cascadia Mono|Noto Sans Mono CJK SC|Microsoft YaHei UI/;
 
 test("checked-in preview artifacts are byte-exact and complete", async () => {

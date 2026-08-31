@@ -1,6 +1,6 @@
 export const config = { runtime: "edge" };
 
-const FONT = "'Courier New', Consolas, monospace";
+const FONT = "Consolas, Menlo, 'DejaVu Sans Mono', 'Courier New', monospace";
 const withAccessibleText = (svg, c) => svg.replace(new RegExp(`(<text\\b[^>]*?)fill="${c.accent}"`, "g"), `$1fill="${c.accentText}"`);
 const FOCUS = [["Embedded Development", "C/C++ · STM32 · Raspberry Pi Pico"], ["Flight Control &amp; Robotics", "PX4 · eFlyDrone-Boards"], ["Hardware Design", "PCB · Schematic Design"], ["Intelligent Sensing", "Python · AI · Computer Vision"]];
 const TAGS = ["C/C++", "Python", "STM32", "Raspberry Pi Pico", "PX4", "PCB", "Schematic", "AI", "Computer Vision"];
