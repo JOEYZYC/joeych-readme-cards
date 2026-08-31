@@ -1,0 +1,136 @@
+name: Refresh profile SVGs
+
+on:
+  schedule:
+    - cron: "0 1 * * 0,3"
+  workflow_dispatch:
+
+concurrency:
+  group: refresh-profile-svgs-main
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    permissions:
+      contents: write
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Checkout trusted main
+        uses: actions/checkout@v7
+        with:
+          ref: main
+
+      - name: Setup Node
+        uses: actions/setup-node@v7
+        with:
+          node-version: "24.19.0"
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Require trusted main ref
+        run: |
+          if [ "$GITHUB_REF" != "refs/heads/main" ]; then
+            echo "Refusing to refresh outside refs/heads/main" >&2
+            exit 1
+          fi
+
+      - name: Refresh generated assets
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: npm run refresh
+
+      - name: Run tests
+        run: npm test
+
+      - name: Scan runtime identity
+        run: npm run scan:identity
+
+      - name: Check diff formatting
+        run: npm run check:diff
+
+      - name: Guard and stage generated files
+        run: |
+          set -euo pipefail
+          allowed_paths=(
+            "data/github-stats.json"
+            "preview/index.html"
+            "preview/svgs/banner_dark.svg"
+            "preview/svgs/banner_light.svg"
+            "preview/svgs/banner_mobile_dark.svg"
+            "preview/svgs/banner_mobile_light.svg"
+            "preview/svgs/footer_dark.svg"
+            "preview/svgs/footer_light.svg"
+            "preview/svgs/footer_mobile_dark.svg"
+            "preview/svgs/footer_mobile_light.svg"
+            "preview/svgs/header_dark.svg"
+            "preview/svgs/header_light.svg"
+            "preview/svgs/header_mobile_dark.svg"
+            "preview/svgs/header_mobile_light.svg"
+            "preview/svgs/profile_dark.svg"
+            "preview/svgs/profile_light.svg"
+            "preview/svgs/profile_mobile_dark.svg"
+            "preview/svgs/profile_mobile_light.svg"
+            "preview/svgs/skills_dark.svg"
+            "preview/svgs/skills_light.svg"
+            "preview/svgs/skills_mobile_dark.svg"
+            "preview/svgs/skills_mobile_light.svg"
+          )
+
+          path_is_allowed() {
+            local candidate="$1"
+            local allowed
+            for allowed in "${allowed_paths[@]}"; do
+              if [ "$candidate" = "$allowed" ]; then
+                return 0
+              fi
+            done
+            return 1
+          }
+
+          invalid_path=0
+          while IFS= read -r -d '' path; do
+            if ! path_is_allowed "$path"; then
+              printf 'Refusing unexpected changed path: %q\n' "$path" >&2
+              invalid_path=1
+            fi
+          done < <(
+            {
+              git diff --name-only --no-renames -z HEAD --
+              git ls-files --others --exclude-standard -z --
+            } | sort -zu
+          )
+          if [ "$invalid_path" -ne 0 ]; then
+            exit 1
+          fi
+
+          for path in "${allowed_paths[@]}"; do
+            if [ ! -f "$path" ] || [ -L "$path" ]; then
+              printf 'Refusing missing or symlinked generated path: %q\n' "$path" >&2
+              exit 1
+            fi
+          done
+
+          git add -- "${allowed_paths[@]}"
+
+      - name: Detect staged changes
+        id: changes
+        run: |
+          if git diff --cached --quiet; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Commit generated assets
+        if: steps.changes.outputs.changed == 'true'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -m "chore(profile): refresh generated SVG snapshots"
+
+      - name: Push generated assets
+        if: steps.changes.outputs.changed == 'true'
+        run: git push origin HEAD:main
