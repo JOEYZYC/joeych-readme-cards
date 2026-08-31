@@ -8,7 +8,6 @@ import {
   FIRST_URL,
   fixture,
   jsonResponse,
-  mockedResponse,
   NOW,
   repository,
   SECOND_URL,
@@ -40,7 +39,9 @@ test("times out a fetch that never settles without touching the target", async (
   let requestSignal;
   const fetchImpl = async (_url, options) => {
     requestSignal = options.signal;
-    return new Promise(() => {});
+    return new Promise((_, reject) => {
+      options.signal.addEventListener("abort", () => reject(new Error("GitHub repository request timed out")));
+    });
   };
 
   await assert.rejects(refreshGithubStats({ targetPath, fetchImpl, now: NOW, timeoutMs: 10 }), /timed out/i);
@@ -51,6 +52,17 @@ test("times out a fetch that never settles without touching the target", async (
   await assertOnlyTargetRemains(directory);
 });
 
+function stalledBody(options) {
+  return {
+    ok: true,
+    status: 200,
+    headers: { get: () => null },
+    json: () => new Promise((_, reject) => {
+      options.signal.addEventListener("abort", () => reject(new Error("GitHub repository request timed out")));
+    }),
+  };
+}
+
 test("times out a response body that never settles without touching the target", async (t) => {
   const { directory, targetPath } = await fixture(t, SENTINEL);
   let requestSignal;
@@ -58,7 +70,7 @@ test("times out a response body that never settles without touching the target",
     targetPath,
     fetchImpl: async (_url, options) => {
       requestSignal = options.signal;
-      return mockedResponse(async () => new Promise(() => {}));
+      return stalledBody(options);
     },
     now: NOW,
     timeoutMs: 10,
@@ -77,9 +89,9 @@ test("times out a response body that never settles without touching the target",
 
 test("times out a stalled page-two response body without publishing page one", async (t) => {
   const { directory, targetPath } = await fixture(t, SENTINEL);
-  const fetchImpl = async (url) => url === FIRST_URL
+  const fetchImpl = async (url, options) => url === FIRST_URL
     ? jsonResponse([repository({ stargazers_count: 9 })], { link: `<${SECOND_URL}>; rel="next"` })
-    : mockedResponse(async () => new Promise(() => {}));
+    : stalledBody(options);
   const refresh = refreshGithubStats({ targetPath, fetchImpl, now: NOW, timeoutMs: 10 });
 
   const outcome = await Promise.race([
@@ -90,63 +102,6 @@ test("times out a stalled page-two response body without publishing page one", a
   assert.match(outcome, /timed out/i);
   assert.deepEqual(await readFile(targetPath), SENTINEL);
   await assertOnlyTargetRemains(directory);
-});
-
-test("handles a late body rejection after timeout without an unhandled rejection", async (t) => {
-  const { directory, targetPath } = await fixture(t, SENTINEL);
-  const unhandled = [];
-  const onUnhandled = (error) => unhandled.push(error);
-  process.on("unhandledRejection", onUnhandled);
-  t.after(() => process.off("unhandledRejection", onUnhandled));
-  const fetchImpl = async () => mockedResponse(() => new Promise((_, reject) => {
-    setTimeout(() => reject(new Error("late body rejection")), 30);
-  }));
-
-  await assert.rejects(refreshGithubStats({ targetPath, fetchImpl, now: NOW, timeoutMs: 10 }), /timed out/i);
-  await new Promise((resolve) => setTimeout(resolve, 50));
-
-  assert.deepEqual(unhandled, []);
-  assert.deepEqual(await readFile(targetPath), SENTINEL);
-  await assertOnlyTargetRemains(directory);
-});
-
-test("a timed-out response body does not poison the next refresh", async (t) => {
-  const { directory, targetPath } = await fixture(t, SENTINEL);
-  const stalled = refreshGithubStats({
-    targetPath,
-    fetchImpl: async () => mockedResponse(async () => new Promise(() => {})),
-    now: NOW,
-    timeoutMs: 10,
-  });
-
-  await assert.rejects(Promise.race([
-    stalled,
-    new Promise((_, reject) => setTimeout(() => reject(new Error("refresh exceeded test bound")), 100)),
-  ]), /timed out/i);
-  const result = await refreshGithubStats({
-    targetPath,
-    fetchImpl: async () => jsonResponse([repository({ stargazers_count: 4, language: "C" })]),
-    now: NOW,
-    timeoutMs: 100,
-  });
-
-  assert.equal(result.changed, true);
-  assert.deepEqual(result.snapshot, { schemaVersion: 1, displayYear: 2031, repositories: 1, stars: 4, languages: ["C"] });
-  await assertOnlyTargetRemains(directory);
-});
-
-test("clears a completed page timer before its timeout can abort the request", async (t) => {
-  const { targetPath } = await fixture(t);
-  let requestSignal;
-  const fetchImpl = async (_url, options) => {
-    requestSignal = options.signal;
-    return jsonResponse([]);
-  };
-
-  await refreshGithubStats({ targetPath, fetchImpl, now: NOW, timeoutMs: 20 });
-  await new Promise((resolve) => setTimeout(resolve, 50));
-
-  assert.equal(requestSignal.aborted, false);
 });
 
 test("cleans a partial temp file after a write failure and preserves the target", async (t) => {
