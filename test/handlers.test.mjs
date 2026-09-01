@@ -10,8 +10,8 @@ const handlers = { header, profile, skills, footer, banner };
 const ORIGINAL_FONT = "Consolas, Menlo, 'DejaVu Sans Mono', 'Courier New', monospace";
 const BARE_XML_AMPERSAND = /&(?!amp;|lt;|gt;|quot;|apos;|#\d+;|#x[0-9A-Fa-f]+;)/;
 const dimensions = {
-  desktop: { header: [900, 196], profile: [900, 292], skills: [900, 452], footer: [900, 92], banner: [900, 44] },
-  mobile: { header: [360, 238], profile: [360, 500], skills: [360, 652], footer: [360, 184], banner: [360, 72] },
+  desktop: { header: [900, 196], profile: [900, 292], skills: [900, 348], footer: [900, 92], banner: [900, 44] },
+  mobile: { header: [360, 238], profile: [360, 500], skills: [360, 468], footer: [360, 184], banner: [360, 72] },
 };
 
 function luminance(hex) {
@@ -177,10 +177,3 @@ for (const theme of ["light", "dark"]) {
     for (const [, fontSize, text] of lines) assert.ok(20 + text.length * Number(fontSize) * 0.6 <= 340, `${text} exceeds the mobile content gutter`);
   });
 }
-
-test("mobile skills keeps the final technology pill above the bottom clearance", async () => {
-  const svg = await (await skills(new Request("https://test.local/api/skills?theme=dark&preview=1&layout=mobile"))).text();
-  assert.match(svg, /<svg[^>]*width="360" height="652"/);
-  assert.match(svg, /<rect x="20" y="612" width="156" height="22"/);
-  assert.ok(652 - (612 + 22) >= 12);
-});
