@@ -5,7 +5,7 @@ A locally maintained terminal-style GitHub Profile SVG card service for JOEYZYC.
 ## Design and Content Boundaries
 
 - [DESIGN.md](DESIGN.md) is the sole visual contract for color, typography, spacing, components, motion, accessibility, and accepted design debt.
-- Profile content uses only verified facts: JOEYCH, JOEYZYC, SuZhou, embedded systems, and publicly listed technologies and projects.
+- Profile content uses only verified facts: JOEYCH, JOEYZYC, SuZhou, embedded systems, publicly listed technologies and projects, and focus directions derived from the account's public stars. It never claims proficiency or availability.
 - Statistics come only from the GitHub REST API for non-fork repositories owned by `JOEYZYC`. A live optional `profile` handler API failure explicitly shows `Unavailable`; published Profile SVGs retain their last-good `data/github-stats.json` values and never estimate or fabricate data.
 - `GITHUB_TOKEN` is the only optional environment variable and can increase the GitHub API request limit. Never commit or output its value.
 
