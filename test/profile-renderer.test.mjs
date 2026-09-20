@@ -8,10 +8,10 @@ const FIRST_URL = "https://api.github.com/users/JOEYZYC/repos?per_page=100&type=
 const SECOND_URL = `${FIRST_URL}&page=2`;
 const SNAPSHOT_STATS = { repositories: 5, stars: 0, languages: ["JavaScript", "TypeScript"] };
 const PROFILE_HASHES = {
-  "light/desktop": "afa0f7f66e5e7c16655bd070314b01320dfb879caa647438b768bc970407f804",
-  "light/mobile": "9af5c6fc1618f91c27503352e9381b253b943ca5353242f95424bb21f28d68dc",
-  "dark/desktop": "b257b29759fa8acda91e3b43b64c600e918af7455086514d838c4fe8ba13ea65",
-  "dark/mobile": "11898dad924fd9d009efbdd2b17b4d72e83e35f30d72fe7a3d6f3efb5c818b4a",
+  "light/desktop": "f132bd228726a3cec6c0c30fc2151abc94ce47e036b861095ae41788fd143935",
+  "light/mobile": "c9670f46b9daa978e5872d93893b23d82c94359ac87d97fc69b93dbba805a5d1",
+  "dark/desktop": "2bbd51fdc4e0a3a5ccb2808fad27aee747181656f1fbf1dcc1f62c4f2b515b16",
+  "dark/mobile": "048182c0f6f41b9f1652af7601aca98cb2b3c02c72a7cb768ae3f1abbc944e36",
 };
 
 function jsonResponse(body, { status = 200, link } = {}) {
