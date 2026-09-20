@@ -21,7 +21,6 @@ A calm hardware-workbench terminal rendered as a 900-unit desktop or 360-unit mo
 | Accent signal | `accent` | `#16a34a` | `#39d353` | Rail, dots, cursor, and non-text signals |
 | Accent text | `accentText` | `#137333` | `#39d353` | Small green text on all declared surfaces |
 | Accent calm | `accentSoft` | `#dcfce7` | `#0d2114` | Context pill fill |
-| Info | `info` | `#0550ae` | `#79c0ff` | Category marker |
 | Warning | `warning` | `#7a4d00` | `#d29922` | Unavailable-state text and marker |
 
 Rules: colors are emitted through each handler's theme token object only. `accent` is never used as small text in light mode; `accentText` provides AA-safe text contrast on surface, bar, inset, and accent-soft backgrounds. `dim` and `warning` are AA-safe on every declared dark or light surface, including the profile inset's translucent light composite. The fixed red, yellow, and green terminal controls are semantic terminal chrome, not profile status.
@@ -59,10 +58,10 @@ Desktop artboards are exactly 900 units wide. Mobile artboards are exactly 360 u
 - **States**: light and dark theme.
 
 ### Signal Pill and Focus Row
-- **Structure**: accent dot for star-derived focus directions, info dot for engineering categories, category label, optional supporting technical terms.
+- **Structure**: accent dot, factual category label or focus directions derived from the account's public stars, optional supporting technical terms.
 - **Variants**: location/focus context pill, skills category row, footer link pill.
 - **States**: default; SVG anchors gain a focus/hover stroke where host support permits.
-- **Accessibility**: no proficiency or availability claims; anchors also have an external Markdown link equivalent.
+- **Accessibility**: no proficiency or availability claims; footer link labels remain readable as text where a host disables embedded SVG links.
 
 ### Availability State
 - **Structure**: warning-colored value `Unavailable` and a clear English reason beneath the GitHub stat rows.
@@ -87,7 +86,7 @@ Strategy: **mixed, border-led terminal material**. A left-to-right title-bar gra
 ### Constraints
 - WCAG 2.2 AA contrast target for text and labels.
 - English copy uses explicit line segmentation in SVG to protect the fixed card geometry.
-- Every SVG has a title and description, and every footer destination is duplicated as a Markdown link in the profile README because embedded SVG links may be disabled by GitHub.
+- Every SVG has a title and description; footer link labels remain readable as text where a host disables embedded SVG links.
 - Reduced motion is honored inside the SVG stylesheet.
 
 ### Accepted Debt
