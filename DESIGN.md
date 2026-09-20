@@ -46,7 +46,7 @@ Desktop artboards are exactly 900 units wide. Mobile artboards are exactly 360 u
 
 ### Terminal Frame
 - **Structure**: base surface, title gradient, three control dots, accent rail, border.
-- **Variants**: desktop and mobile header/footer with chrome; desktop and mobile section card; desktop and mobile banner inset.
+- **Variants**: desktop and mobile header with chrome; desktop and mobile footer link bar; desktop and mobile section card; desktop and mobile banner inset.
 - **Spacing**: desktop 24/28-unit gutter, mobile 20-unit gutter, 3-unit rail, 32/34-unit bar.
 - **States**: light and dark theme, each with desktop and mobile artboards.
 - **Accessibility**: `<title>` and `<desc>` name every emitted SVG; text uses the shared terminal stack and color pairings target AA contrast.
@@ -79,7 +79,7 @@ The header's prompt cycles through factual focus lines with SMIL opacity at a 12
 
 ## 7. Depth & Surface
 
-Strategy: **mixed, border-led terminal material**. A left-to-right title-bar gradient and a low-opacity inset telemetry panel create depth; 0.5/1-unit rules preserve the crisp terminal boundary. The only glow is the dark-theme stat value and is reserved for live telemetry.
+Strategy: **mixed, border-led terminal material**. The header's left-to-right title-bar gradient and a low-opacity inset telemetry panel create depth; 0.5/1-unit rules preserve the crisp terminal boundary. The only glow is the dark-theme stat value and is reserved for live telemetry.
 
 ## 8. Accessibility Constraints & Accepted Debt
 
