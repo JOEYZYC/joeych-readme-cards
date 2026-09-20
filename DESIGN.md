@@ -32,15 +32,15 @@ Rules: colors are emitted through each handler's theme token object only. `accen
 | Display | 34 | 900 | Profile name |
 | Value | 20 | 700 | Live statistic value |
 | Body strong | 12 | 700 | About lead, focus category |
-| Body | 11 | 400 | Supporting copy |
-| Label | 10 | 700 | Pills and row labels |
-| Overline | 9 | 700 | `//` section labels |
+| Body | 12 | 400 | Supporting copy |
+| Label | 11 | 700 | Pills and row labels |
+| Overline | 10 | 700 | `//` section labels |
 
 Primary stack: `Consolas, Menlo, 'DejaVu Sans Mono', 'Courier New', monospace`. Windows resolves Consolas, macOS Menlo, and Linux DejaVu Sans Mono; each face keeps the terminal cadence near a 0.6em advance (Consolas 0.55em), so fixed geometry holds across platforms. Weights 600 and 900 render as bold on every listed face.
 
 ## 4. Spacing & Layout
 
-Desktop artboards are exactly 900 units wide. Mobile artboards are exactly 360 units wide and selected in the root README at `max-width: 600px`; they are separate compositions, never scaled 900-unit canvases. The 4-unit base is used for micro alignment; desktop gutters are 24 or 28 units and mobile gutters are 20 units. The accent rail is 3 units, terminal bars are 32 or 34 units, and pill height is 20 to 28 units. The desktop profile card holds a 456-unit split; mobile profile is 500 units high with a 19-unit gap after the stats divider, while mobile skills is 468 units high and ends after its focus rows. Mobile cards become one-column vertical reading flows with 11 to 15-unit body text and fewer secondary labels. SVG artboards scale proportionally only within their matching layout class.
+Desktop artboards are exactly 900 units wide. Mobile artboards are exactly 360 units wide and selected in the root README at `max-width: 600px`; they are separate compositions, never scaled 900-unit canvases. The 4-unit base is used for micro alignment; desktop gutters are 24 or 28 units and mobile gutters are 20 units. The accent rail is 3 units, terminal bars are 32 or 34 units, and pill height is 20 to 28 units. The desktop profile card holds a 456-unit split; mobile profile is 500 units high with a 19-unit gap after the stats divider, while mobile skills is 468 units high and ends after its focus rows. Mobile cards become one-column vertical reading flows with 12 to 15-unit body text and fewer secondary labels. SVG artboards scale proportionally only within their matching layout class.
 
 ## 5. Components
 
@@ -59,7 +59,7 @@ Desktop artboards are exactly 900 units wide. Mobile artboards are exactly 360 u
 
 ### Signal Pill and Focus Row
 - **Structure**: accent dot, factual category label or focus directions derived from the account's public stars, optional supporting technical terms.
-- **Variants**: location/focus context pill, skills category row, footer link pill.
+- **Variants**: role context pill, skills category row, footer link pill.
 - **States**: default; SVG anchors gain a focus/hover stroke where host support permits.
 - **Accessibility**: no proficiency or availability claims; footer link labels remain readable as text where a host disables embedded SVG links.
 

@@ -18,7 +18,7 @@ export default async function handler(req) {
   let x = 32;
   const pills = LINKS.map(([label, url]) => {
     const width = label.length * 7.2 + 34;
-    const result = `<a href="${url}" target="_blank" rel="noopener"><rect x="${x}" y="33" width="${width}" height="26" rx="13" fill="${c.bar}" stroke="${c.border}" stroke-width=".5"/><circle cx="${x + 11}" cy="46" r="2.5" fill="${c.accent}" opacity=".7"/><text x="${x + 22 + (width - 22) / 2}" y="50" text-anchor="middle" font-family="${FONT}" font-size="10" font-weight="700" fill="${c.muted}">${label}</text></a>`;
+    const result = `<a href="${url}" target="_blank" rel="noopener"><rect x="${x}" y="33" width="${width}" height="26" rx="13" fill="${c.bar}" stroke="${c.border}" stroke-width=".5"/><circle cx="${x + 11}" cy="46" r="2.5" fill="${c.accent}" opacity=".7"/><text x="${x + 22 + (width - 22) / 2}" y="50" text-anchor="middle" font-family="${FONT}" font-size="11" font-weight="700" fill="${c.muted}">${label}</text></a>`;
     x += width + 10;
     return result;
   }).join("");

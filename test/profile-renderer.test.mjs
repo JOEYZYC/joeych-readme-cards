@@ -8,10 +8,10 @@ const FIRST_URL = "https://api.github.com/users/JOEYZYC/repos?per_page=100&type=
 const SECOND_URL = `${FIRST_URL}&page=2`;
 const SNAPSHOT_STATS = { repositories: 5, stars: 0, languages: ["JavaScript", "TypeScript"] };
 const PROFILE_HASHES = {
-  "light/desktop": "fe3123dcb7188677ed1b69575bb85dee8ef96059701fa693dfffcafff8d4543b",
-  "light/mobile": "5394722770bfb442f37aa2dac4df095e1e55d02255600394f110c89c5a91b7ce",
-  "dark/desktop": "3c222c1d6a7080b8752e5743b97693a11fe6b04d448acf14bee5d90e6957cc7b",
-  "dark/mobile": "b98dad57ba07e57d4a367a00639a6a2af1ab4650c394676ee96125954f58868f",
+  "light/desktop": "afa0f7f66e5e7c16655bd070314b01320dfb879caa647438b768bc970407f804",
+  "light/mobile": "9af5c6fc1618f91c27503352e9381b253b943ca5353242f95424bb21f28d68dc",
+  "dark/desktop": "b257b29759fa8acda91e3b43b64c600e918af7455086514d838c4fe8ba13ea65",
+  "dark/mobile": "11898dad924fd9d009efbdd2b17b4d72e83e35f30d72fe7a3d6f3efb5c818b4a",
 };
 
 function jsonResponse(body, { status = 200, link } = {}) {

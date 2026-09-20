@@ -92,7 +92,7 @@ test("profile live path counts only original repositories and orders languages",
     assert.match(svg, />16</);
     assert.match(svg, />JavaScript · Python</);
     assert.match(svg, /Owner repos only; forks excluded/);
-    assert.match(svg, /<text x="480" y="235" font-family="Consolas, Menlo, 'DejaVu Sans Mono', 'Courier New', monospace" font-size="10" fill="#7d8590">Owner repos only; forks excluded<\/text>/);
+    assert.match(svg, /<text x="480" y="235" font-family="Consolas, Menlo, 'DejaVu Sans Mono', 'Courier New', monospace" font-size="11" fill="#7d8590">Owner repos only; forks excluded<\/text>/);
     assert.match(svg, new RegExp(`UTC ${new Date().getUTCFullYear()}`));
     assert.doesNotMatch(svg, />9999</);
   } finally {
