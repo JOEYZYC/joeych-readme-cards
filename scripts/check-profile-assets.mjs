@@ -6,7 +6,6 @@ const canonicalBaseUrl = "https://raw.githubusercontent.com/JOEYZYC/joeych-readm
 const voidTags = new Set(["area", "base", "br", "col", "embed", "hr", "img", "input", "link", "meta", "param", "source", "track", "wbr"]);
 const canonicalFilenames = [
   "banner_dark.svg", "banner_light.svg", "banner_mobile_dark.svg", "banner_mobile_light.svg",
-  "footer_dark.svg", "footer_light.svg", "footer_mobile_dark.svg", "footer_mobile_light.svg",
   "header_dark.svg", "header_light.svg", "header_mobile_dark.svg", "header_mobile_light.svg",
   "profile_dark.svg", "profile_light.svg", "profile_mobile_dark.svg", "profile_mobile_light.svg",
   "skills_dark.svg", "skills_light.svg", "skills_mobile_dark.svg", "skills_mobile_light.svg",
@@ -15,10 +14,9 @@ const canonicalFilenames = [
 function sameMembers(left, right) { return left.size === right.size && [...left].every((value) => right.has(value)); }
 
 function assertGeneratedFilenameContract() {
-  const canonical = new Set(canonicalFilenames);
   const generated = new Set(expectedSvgFilenames);
-  if (canonical.size !== 20 || generated.size !== 20 || !sameMembers(canonical, generated)) {
-    throw new Error("Generated SVG filename contract does not match the canonical five-card asset set");
+  if (!canonicalFilenames.every((filename) => generated.has(filename))) {
+    throw new Error("Profile SVG filenames must all be produced by the preview builder");
   }
 }
 
@@ -221,7 +219,7 @@ export function assertProfileAssetUrls(readme) {
   const expectedUrls = new Set(expectedProfileAssetUrls);
 
   if (uniqueUrls.size !== urls.length) throw new Error("Profile README contains duplicate canonical SVG URLs");
-  if (urls.length !== 20) throw new Error(`Profile README must contain exactly 20 canonical SVG URLs, found ${urls.length}`);
+  if (urls.length !== canonicalFilenames.length) throw new Error(`Profile README must contain exactly ${canonicalFilenames.length} canonical SVG URLs, found ${urls.length}`);
 
   for (const url of urls) {
     if (url.startsWith(canonicalBaseUrl) && !expectedUrls.has(url)) {

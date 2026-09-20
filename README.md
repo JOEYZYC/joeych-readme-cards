@@ -60,9 +60,9 @@ Open `preview/index.html` in a browser, or run `preview:serve` and visit the loc
 
 ## Profile README Assets
 
-The GitHub Profile repository [JOEYZYC/JOEYZYC](https://github.com/JOEYZYC/JOEYZYC) is the primary consumer. It references exactly 20 immutable-shape SVG locations, five cards by desktop/mobile and light/dark, at `https://raw.githubusercontent.com/JOEYZYC/joeych-readme-cards/main/preview/svgs/`. Those raw Profile URLs remain unchanged and don't require Vercel. The sibling Profile currently references only those 20 SVGs.
+The GitHub Profile repository [JOEYZYC/JOEYZYC](https://github.com/JOEYZYC/JOEYZYC) is the primary consumer. It references exactly 16 immutable-shape SVG locations, four cards by desktop/mobile and light/dark, at `https://raw.githubusercontent.com/JOEYZYC/joeych-readme-cards/main/preview/svgs/`. Those raw Profile URLs remain unchanged and don't require Vercel. The sibling Profile currently references only those 16 SVGs. The footer card remains part of the generated gallery, but the Profile no longer references it.
 
-`check:profile-assets` reads the sibling Profile README without changing it. It requires exactly the 20 unique canonical values from active `img[src]` and `source[srcset]` attributes. It rejects wrong repositories, branches, paths, query or fragment suffixes, duplicates, missing entries, unknown SVG filenames, comments, and unrelated attributes.
+`check:profile-assets` reads the sibling Profile README without changing it. It requires exactly the 16 unique canonical values from active `img[src]` and `source[srcset]` attributes. It rejects wrong repositories, branches, paths, query or fragment suffixes, duplicates, missing entries, unknown SVG filenames, comments, and unrelated attributes.
 
 ## Snapshot Publisher
 
