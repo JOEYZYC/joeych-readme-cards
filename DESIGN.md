@@ -59,7 +59,7 @@ Desktop artboards are exactly 900 units wide. Mobile artboards are exactly 360 u
 - **States**: light and dark theme.
 
 ### Signal Pill and Focus Row
-- **Structure**: accent dot, factual category label or a focus direction derived from the account's public stars, optional supporting technical terms.
+- **Structure**: accent dot for star-derived focus directions, info dot for engineering categories, category label, optional supporting technical terms.
 - **Variants**: location/focus context pill, skills category row, footer link pill.
 - **States**: default; SVG anchors gain a focus/hover stroke where host support permits.
 - **Accessibility**: no proficiency or availability claims; anchors also have an external Markdown link equivalent.
