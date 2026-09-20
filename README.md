@@ -29,14 +29,14 @@ The project locks Node.js 24.19.0. Validate the tool lock according to workstati
 
 ```powershell
 pwsh -NoProfile -File D:/Dev/ProjectTools/verify.ps1 -Project . -Json
-D:/Dev/Bin/devrun.cmd node-24 -- npm run preview
-D:/Dev/Bin/devrun.cmd node-24 -- npm run stats:refresh
-D:/Dev/Bin/devrun.cmd node-24 -- npm run refresh
-D:/Dev/Bin/devrun.cmd node-24 -- npm test
-D:/Dev/Bin/devrun.cmd node-24 -- npm run preview:serve
-D:/Dev/Bin/devrun.cmd node-24 -- npm run scan:identity
-D:/Dev/Bin/devrun.cmd node-24 -- npm run check:diff
-D:/Dev/Bin/devrun.cmd node-24 -- npm run check:profile-assets
+D:/Dev/Bin/devrun.exe node-24 -- npm run preview
+D:/Dev/Bin/devrun.exe node-24 -- npm run stats:refresh
+D:/Dev/Bin/devrun.exe node-24 -- npm run refresh
+D:/Dev/Bin/devrun.exe node-24 -- npm test
+D:/Dev/Bin/devrun.exe node-24 -- npm run preview:serve
+D:/Dev/Bin/devrun.exe node-24 -- npm run scan:identity
+D:/Dev/Bin/devrun.exe node-24 -- npm run check:diff
+D:/Dev/Bin/devrun.exe node-24 -- npm run check:profile-assets
 ```
 
 `preview` generates these deterministic files in `preview/svgs/` and rebuilds `preview/index.html`:
