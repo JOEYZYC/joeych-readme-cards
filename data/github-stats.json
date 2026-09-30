@@ -1,11 +1,11 @@
 {
   "schemaVersion": 1,
   "displayYear": 2026,
-  "repositories": 6,
+  "repositories": 7,
   "stars": 0,
   "languages": [
-    "JavaScript",
     "Python",
+    "JavaScript",
     "TypeScript"
   ]
 }
