@@ -1,85 +1,42 @@
-# JOEYZYC Terminal Cards
+# Terminal Cards
 
-A locally maintained terminal-style GitHub Profile SVG card service for JOEYZYC. Desktop cards use 900-unit SVG artboards; mobile cards use dedicated 360-unit compositions selected by the root Profile README at `max-width: 600px`. Both layouts support light and dark themes and use only repository-generated snapshots, never a third-party deployment domain.
+用于 GitHub 个人主页的终端风格 SVG 卡片，支持深浅主题和桌面、移动端布局。
 
-## Design and Content Boundaries
+Terminal-style SVG cards for GitHub profiles, with light/dark themes and desktop/mobile layouts.
 
-- [DESIGN.md](DESIGN.md) is the sole visual contract for color, typography, spacing, components, motion, accessibility, and accepted design debt.
-- Profile content uses only verified facts: JOEYCH, JOEYZYC, JiangSu, embedded systems engineer, RF engineer, publicly listed technologies and projects, and focus directions derived from the account's public stars. It never claims proficiency or availability.
-- Statistics come only from the GitHub REST API for non-fork repositories owned by `JOEYZYC`. A live optional `profile` handler API failure explicitly shows `Unavailable`; published Profile SVGs retain their last-good `data/github-stats.json` values and never estimate or fabricate data.
-- `GITHUB_TOKEN` is the only optional environment variable and can increase the GitHub API request limit. Never commit or output its value.
+## 快速开始 / Quick start
 
-## Optional Handler Routes
+需要 Node.js 24，npm 版本见 `package.json`。
 
-The Profile uses the checked-in GitHub snapshot assets below. A Vercel deployment isn't required. These routes remain available when an environment compatible with Vercel Edge Functions is wanted for handler testing or another consumer:
+Requires Node.js 24. Use the npm version declared in `package.json`.
 
-| Route | Content |
-|---|---|
-| `/api/header?theme=dark` | Name, location, and terminal typing prompt |
-| `/api/profile?theme=light` | English profile and non-fork GitHub REST statistics |
-| `/api/skills?theme=dark` | Factual technical focus categories without proficiency percentages |
-| `/api/footer?theme=light` | GitHub, personal website, and original project links |
-| `/api/banner?theme=dark` | Entry point for terminal card service documentation |
-
-Append `layout=mobile` to any route for its dedicated 360-unit mobile composition; without it, the route returns its 900-unit desktop composition. Omit `theme`, or use a value other than `light`, for the dark theme. In production, the `profile` route uses the current UTC year. The snapshot-only `preview=1` produces a deterministic unavailable-data state: it performs no network request, shows no repository, star, or language values, and explicitly identifies itself as a static preview.
-
-## Local Preview, Refresh, and Tests
-
-The project locks Node.js 24.22.2 and npm 11.19.0, matching the current workstation selection. Run these commands from the `readme-cards` directory. Validate the tool lock first, then activate exactly one Profile and run the command in the same non-interactive PowerShell process:
-
-```powershell
-pwsh -NoProfile -File D:/Dev/Station/ProjectTools/verify.ps1 -Project . -Json
-pwsh -NoProfile -Command ". D:/Dev/Station/Profiles/node-24.ps1; npm run preview"
-pwsh -NoProfile -Command ". D:/Dev/Station/Profiles/node-24.ps1; npm run stats:refresh"
-pwsh -NoProfile -Command ". D:/Dev/Station/Profiles/node-24.ps1; npm run refresh"
-pwsh -NoProfile -Command ". D:/Dev/Station/Profiles/node-24.ps1; npm test"
-pwsh -NoProfile -Command ". D:/Dev/Station/Profiles/node-24.ps1; npm run preview:serve"
-pwsh -NoProfile -Command ". D:/Dev/Station/Profiles/node-24.ps1; npm run scan:identity"
-pwsh -NoProfile -Command ". D:/Dev/Station/Profiles/node-24.ps1; npm run check:diff"
-pwsh -NoProfile -Command ". D:/Dev/Station/Profiles/node-24.ps1; npm run check:profile-assets"
+```sh
+npm ci
+npm run preview
+npm run preview:serve
 ```
 
-The `node-24` Profile resolves the selected Node 24 installation from `D:/Dev/Station/Manifests/installed-tools.yml`; available Profiles are defined in `D:/Dev/Station/Profiles/profiles.psd1`. When that selection changes, query the activated `node --version` and `npm --version`, then align `.devtools.json`, `package.json`, the CI Node version, and its golden fixture. The workstation verifier checks declared paths, package-manager metadata, and Profile activation, but does not compare the activated runtime versions with the lock; check those versions explicitly before testing.
+打开 <http://localhost:4173> 预览。生成的 SVG 位于 `preview/svgs/`，可直接用于 README，无需单独部署服务。
 
-`preview` generates these deterministic files in `preview/svgs/` and rebuilds `preview/index.html`:
+Open <http://localhost:4173> to preview. Generated SVGs in `preview/svgs/` can be used directly in a README without a separate service deployment.
 
-```text
-banner_dark.svg          banner_light.svg
-banner_mobile_dark.svg   banner_mobile_light.svg
-footer_dark.svg          footer_light.svg
-footer_mobile_dark.svg   footer_mobile_light.svg
-header_dark.svg          header_light.svg
-header_mobile_dark.svg   header_mobile_light.svg
-profile_dark.svg         profile_light.svg
-profile_mobile_dark.svg  profile_mobile_light.svg
-skills_dark.svg          skills_light.svg
-skills_mobile_dark.svg   skills_mobile_light.svg
+## 更新与测试 / Update and test
+
+```sh
+npm run refresh
+npm test
 ```
 
-Open `preview/index.html` in a browser, or run `preview:serve` and visit the local preview address, to inspect both themes for desktop and mobile. Generated Profile SVGs use `data/github-stats.json` and need neither network access nor a token. Only the optional handler's `preview=1` path uses deterministic unavailable data. `test` uses Node's built-in test framework to check handlers, theme SVGs, geometry regressions, AA contrast, identity cleanup, static preview states, and 200/400/404 preview-server behavior.
+`preview` 使用本地快照离线生成；`refresh` 从 GitHub API 更新统计并重新生成卡片。`GITHUB_TOKEN` 可选，可提高 API 请求限额，请勿提交其值。
 
-`stats:refresh` retrieves and atomically replaces only a complete valid snapshot. `preview` regenerates the deterministic gallery from the checked-in snapshot without network access. `refresh` stages a new snapshot and all generated previews, then promotes them as one transaction. Failures before promotion leave published artifacts untouched; promotion failure attempts to restore the last-good snapshot and previews. Later tests and scans gate staging and publication; they do not roll back locally generated bytes. A byte-identical result is a successful no-op and the publisher makes no commit.
+`preview` generates cards offline from the local snapshot. `refresh` fetches GitHub statistics and regenerates the cards. An optional `GITHUB_TOKEN` raises the API rate limit; never commit its value.
 
-If rollback itself fails, the transaction retains its workspace and reports the absolute recovery path in the error message and `recoveryPath` property. Published targets may then be incomplete: inspect the retained backups before manual recovery or cleanup. No automatic recovery is attempted. Local retention on an ephemeral CI runner is not durable; the publisher attempts to upload surviving recovery files as described below.
+GitHub Actions 每周三、周日自动更新，也可手动触发。设计说明见 [DESIGN.md](DESIGN.md)。
 
-## Profile README Assets
+GitHub Actions refreshes the assets on Wednesdays and Sundays, with manual runs also available. See [DESIGN.md](DESIGN.md) for design notes.
 
-The GitHub Profile repository [JOEYZYC/JOEYZYC](https://github.com/JOEYZYC/JOEYZYC) is the primary consumer. It references exactly 16 immutable-shape SVG locations, four cards by desktop/mobile and light/dark, at `https://raw.githubusercontent.com/JOEYZYC/joeych-readme-cards/main/preview/svgs/`. Those raw Profile URLs remain unchanged and don't require Vercel. The sibling Profile currently references only those 16 SVGs. The footer card remains part of the generated gallery, but the Profile no longer references it.
+## 许可与致谢 / License and credits
 
-`check:profile-assets` reads the sibling Profile README without changing it. It requires exactly the 16 unique canonical values from active `img[src]` and `source[srcset]` attributes. It rejects wrong repositories, branches, paths, query or fragment suffixes, duplicates, missing entries, unknown SVG filenames, comments, and unrelated attributes.
+本项目基于 [hazy-readme-cards](https://github.com/Hazy019/hazy-readme-cards)，采用 MIT 许可证。许可及来源说明见 [LICENSE](LICENSE) 和 [NOTICE.md](NOTICE.md)。
 
-## Snapshot Publisher
-
-`.github/workflows/refresh-profile-svgs.yml` runs at `0 1 * * 0,3`, Wednesday and Sunday at 01:00 UTC, or 09:00 Asia/Shanghai. GitHub may delay or drop jobs at the top of the hour. Use `workflow_dispatch` to recover a missed run. GitHub disables schedules in inactive public repositories after 60 days. Re-enable it in the Actions UI or API, or run `gh workflow enable refresh-profile-svgs.yml`, then dispatch it manually from `main`.
-
-The publishing job has explicit `contents: write` permission and passes GitHub's built-in `GITHUB_TOKEN` only to the refresh command. It uses no PAT. It selects the locked Node version and installs the npm version declared by `package.json` before `npm ci`, rather than relying on Node's bundled npm. `actions/checkout@v7`, `actions/setup-node@v7`, and `actions/upload-artifact@v7` are deliberately mutable major tags, the chosen update policy for this repository.
-
-The versioned snapshot schema is `{ schemaVersion, displayYear, repositories, stars, languages }`. Refresh includes owned repositories that aren't forks, including archived originals. It ranks up to three primary languages by repository count, then Unicode code-point order on ties. The values are data, not permanent documentation constants.
-
-Only `data/github-stats.json`, `preview/index.html`, and the 20 canonical `preview/svgs/` files may be staged. Tests, identity scanning, and diff formatting finish before staging. A changed set is committed together; an unchanged set produces no commit. Publication does not cancel a running job, though GitHub may replace an older pending run.
-
-On failure, surviving `.preview-publication.*/` files are uploaded as `publication-recovery-<run_id>-<run_attempt>` with a seven-day retention period. No surviving files means no artifact. This best-effort upload is not automatic recovery; inspect any saved backups before restoring or removing files.
-
-## Attribution and License
-
-This project is an MIT-licensed derivative of [Hazy019/hazy-readme-cards](https://github.com/Hazy019/hazy-readme-cards), originally authored by Kyrell Santillan and adapted from revision `970dce929d32b3e2dbe1991faf9ef37f86885b9a`. The original [LICENSE](LICENSE) remains unchanged; see [NOTICE.md](NOTICE.md) for complete attribution and derivation details. JOEYZYC maintains only this derivative's profile content, generated snapshots, and documentation.
+Based on [hazy-readme-cards](https://github.com/Hazy019/hazy-readme-cards), under the MIT license. See [LICENSE](LICENSE) and [NOTICE.md](NOTICE.md) for licensing and attribution.
