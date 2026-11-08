@@ -1,8 +1,16 @@
 import { randomUUID } from "node:crypto";
 import { mkdir, rename, rm } from "node:fs/promises";
-import { join } from "node:path";
+import { join, resolve } from "node:path";
 
 const defaultFileSystem = { mkdir, rename, rm };
+
+class IncompleteRollbackError extends AggregateError {
+  constructor(errors, workspacePath) {
+    const recoveryPath = resolve(workspacePath);
+    super(errors, `Artifact promotion and rollback failed; recovery workspace retained at ${recoveryPath}`);
+    this.recoveryPath = recoveryPath;
+  }
+}
 
 export function transactionPaths(parentPath, name, transactionId) {
   return {
@@ -56,7 +64,7 @@ async function promote(entries, workspacePath, fileSystem) {
     }
   } catch (error) {
     const rollbackErrors = await rollback(entries, states, workspacePath, fileSystem);
-    if (rollbackErrors.length > 0) throw new AggregateError([error, ...rollbackErrors], "Artifact promotion and rollback failed");
+    if (rollbackErrors.length > 0) throw new IncompleteRollbackError([error, ...rollbackErrors], workspacePath);
     throw error;
   }
 }
@@ -85,7 +93,8 @@ export async function runArtifactTransaction({
   }
 
   const cleanupErrors = [];
-  if (workspaceOwned) {
+  const recoveryPath = failure instanceof IncompleteRollbackError ? failure.recoveryPath : undefined;
+  if (workspaceOwned && !recoveryPath) {
     try {
       await fileSystem.rm(workspacePath, { recursive: true, force: true, maxRetries: 3, retryDelay: 10 });
     } catch (error) {
@@ -99,6 +108,13 @@ export async function runArtifactTransaction({
       cleanupErrors.push(error);
     }
   }
-  if (cleanupErrors.length > 0) throw new AggregateError(failure ? [failure, ...cleanupErrors] : cleanupErrors, "Artifact transaction cleanup failed");
+  if (cleanupErrors.length > 0) {
+    const cleanupFailure = new AggregateError(
+      failure ? [failure, ...cleanupErrors] : cleanupErrors,
+      `Artifact transaction cleanup failed${recoveryPath ? `; recovery workspace retained at ${recoveryPath}` : ""}`,
+    );
+    if (recoveryPath) cleanupFailure.recoveryPath = recoveryPath;
+    throw cleanupFailure;
+  }
   if (failure) throw failure;
 }

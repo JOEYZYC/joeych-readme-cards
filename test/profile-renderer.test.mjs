@@ -8,10 +8,10 @@ const FIRST_URL = "https://api.github.com/users/JOEYZYC/repos?per_page=100&type=
 const SECOND_URL = `${FIRST_URL}&page=2`;
 const SNAPSHOT_STATS = { repositories: 5, stars: 0, languages: ["JavaScript", "TypeScript"] };
 const PROFILE_HASHES = {
-  "light/desktop": "323a83cc34769e34e1f4c43a9690bf9c6a3d4e05ce274340d2d8fa2476c46035",
-  "light/mobile": "8be128c3d060583629b3fc9f42a31519d64c92375245ab370fad3c28113b4ee6",
-  "dark/desktop": "af62d0244ebab06704bcb6f2b46a17de03ffd0ec02435d225b4dc887555babb0",
-  "dark/mobile": "2b60b0d3587c2702ab10d3d13b1240d37eeddb07f84a6f745ec8567a0c21dd58",
+  "light/desktop": "4cffe7e5379cb7458461a4cefb411ff6c964d368c938f911a41baf5fa545bd39",
+  "light/mobile": "e54c60a923428b6eb0a6789e52b73ad6b0ae94e10677ec9ade70bbb2da6dcce0",
+  "dark/desktop": "51b54748aa0718c1d82a4f1263c2d4c2c5cf6f4d508daf4f5ec9673242abb591",
+  "dark/mobile": "d3340d11b3bbd398a3ce2a703cd58e85c395f5a57a93c61848ce3bf66a28d3c4",
 };
 
 function jsonResponse(body, { status = 200, link } = {}) {
@@ -70,7 +70,7 @@ for (const [theme, layout, width, height] of [
 }
 
 for (const [variant, expectedHash] of Object.entries(PROFILE_HASHES)) {
-  test(`normal Profile output remains byte-identical for ${variant}`, () => {
+  test(`normal Profile output matches the continuous-surface baseline for ${variant}`, () => {
     const [theme, layout] = variant.split("/");
 
     const svg = renderProfileSvg({ theme, layout, stats: SNAPSHOT_STATS, displayYear: 2031 });

@@ -30,8 +30,6 @@ export async function refreshPreview({
       await refresh({ targetPath: stagedSnapshot, token, fetchImpl, fileSystem });
       await generate({
         previewDirectory: stagedPreview,
-        outputDirectory: join(stagedPreview, "svgs"),
-        indexFile: join(stagedPreview, "index.html"),
         snapshotFile: stagedSnapshot,
         fileSystem,
       });

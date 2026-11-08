@@ -8,7 +8,13 @@ const types = { ".html": "text/html; charset=utf-8", ".svg": "image/svg+xml" };
 export function createPreviewHandler(rootDirectory = join(process.cwd(), "preview")) {
   const root = resolve(rootDirectory);
   return async (request, response) => {
-    const pathname = request.url === "/" ? "/index.html" : new URL(request.url, "http://localhost").pathname;
+    let pathname;
+    try {
+      pathname = request.url === "/" ? "/index.html" : new URL(request.url, "http://localhost").pathname;
+    } catch {
+      response.writeHead(400).end("Bad Request");
+      return;
+    }
     if (pathname === "/favicon.ico") {
       response.writeHead(204).end();
       return;

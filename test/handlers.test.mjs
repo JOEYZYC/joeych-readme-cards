@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import header from "../api/header.js";
-import profile from "../api/profile.js";
+import profile, { PREVIEW_STATS, renderProfileSvg } from "../api/profile.js";
 import skills from "../api/skills.js";
 import footer from "../api/footer.js";
 import banner from "../api/banner.js";
@@ -72,10 +72,40 @@ test("header preserves the baseline desktop and mobile outer frames", async () =
   assert.match(mobile, /<path d="M0 \.5H360M359\.5 0V238M0 237\.5H360" stroke="#30363d" stroke-width="1" fill="none"\/>/);
 });
 
-test("profile light inset uses the documented warm-paper token", async () => {
-  const svg = await (await profile(new Request("https://test.local/api/profile?theme=light&preview=1"))).text();
-  assert.match(svg, /<rect x="456" width="444" height="292" fill="#f0ead6"/);
-});
+for (const [theme, surface, soft, accent] of [
+  ["light", "#fcfbf9", "#dcfce7", "#16a34a"],
+  ["dark", "#0a0c10", "#0d2114", "#39d353"],
+]) {
+  for (const layout of ["desktop", "mobile"]) {
+    test(`profile ${layout} ${theme} uses one continuous surface for about and statistics`, () => {
+      const svg = renderProfileSvg({ theme, layout, stats: PREVIEW_STATS, displayYear: 2026 });
+      const [width, height] = dimensions[layout].profile;
+      assert.match(svg, new RegExp(`<rect width="${width}" height="${height}" fill="${surface}"/>`));
+      const filledRects = [...svg.matchAll(/<rect\b[^>]*\bfill="([^"]+)"[^>]*\/>/g)];
+      // Only the canvas, UTC pill, signal rail, and desktop divider may be filled.
+      assert.equal(filledRects.length, layout === "desktop" ? 4 : 3);
+      assert.deepEqual(filledRects.map(([, fill]) => fill).sort(),
+        (layout === "desktop" ? [surface, soft, accent, "url(#divider)"] : [surface, soft, accent]).sort());
+      assert.doesNotMatch(svg, /#f0ead6|#0d1015|opacity="\.(?:65|72)"/);
+    });
+
+    for (const [state, stats] of [
+      ["snapshot", { repositories: 6, stars: 0, languages: ["JavaScript", "Python", "TypeScript"] }],
+      ["static preview", PREVIEW_STATS],
+      ["unavailable", { repositories: null, stars: null, languages: [], unavailable: true }],
+    ]) {
+      test(`profile ${layout} ${theme} ${state} text meets AA on its rendered surfaces`, () => {
+        const svg = renderProfileSvg({ theme, layout, stats, displayYear: 2026 });
+        const texts = [...svg.matchAll(/<text\b[^>]*\bfill="(#[0-9a-f]{6})"[^>]*>([^<]+)<\/text>/g)];
+        assert.ok(texts.length > 15, "all profile text must be checked");
+        for (const [, fill, text] of texts) {
+          const background = text.startsWith("UTC ") ? soft : surface;
+          assert.ok(contrast(fill, background) >= 4.5, `${text}: ${fill} on ${background} must meet AA`);
+        }
+      });
+    }
+  }
+}
 
 test("profile live path counts only original repositories and orders languages", async () => {
   const originalFetch = globalThis.fetch;
@@ -150,14 +180,13 @@ test("profile preview desktop and mobile never invoke fetch", async () => {
 
 test("documented small-text tokens meet WCAG AA on declared surfaces", () => {
   const pairs = [
-    ["#59636e", "#fcfbf9"], ["#59636e", "#f5f2eb"], ["#59636e", "#f0ead6"], ["#59636e", "#dcfce7"],
-    ["#137333", "#fcfbf9"], ["#137333", "#f5f2eb"], ["#137333", "#f0ead6"], ["#137333", "#dcfce7"],
-    ["#7d8590", "#0a0c10"], ["#7d8590", "#12151b"], ["#7d8590", "#0d1015"], ["#7d8590", "#0d2114"],
-    ["#39d353", "#0a0c10"], ["#39d353", "#12151b"], ["#39d353", "#0d1015"], ["#39d353", "#0d2114"],
-    ["#7a4d00", "#fcfbf9"], ["#7a4d00", "#f5f2eb"], ["#7a4d00", "#f0ead6"], ["#7a4d00", "#f3efdf"], ["#7a4d00", "#dcfce7"],
-    ["#d29922", "#0a0c10"], ["#d29922", "#0d1015"], ["#d29922", "#0d2114"],
+    ["#59636e", "#fcfbf9"], ["#59636e", "#f5f2eb"], ["#59636e", "#dcfce7"],
+    ["#137333", "#fcfbf9"], ["#137333", "#f5f2eb"], ["#137333", "#dcfce7"],
+    ["#7d8590", "#0a0c10"], ["#7d8590", "#12151b"], ["#7d8590", "#0d2114"],
+    ["#39d353", "#0a0c10"], ["#39d353", "#12151b"], ["#39d353", "#0d2114"],
+    ["#7a4d00", "#fcfbf9"], ["#7a4d00", "#f5f2eb"], ["#7a4d00", "#dcfce7"],
+    ["#d29922", "#0a0c10"], ["#d29922", "#12151b"], ["#d29922", "#0d2114"],
   ];
-  assert.ok(contrast("#9a6700", "#f3efdf") < 4.5, "the retired light warning token must fail AA on the actual inset composite");
   for (const [foreground, background] of pairs) assert.ok(contrast(foreground, background) >= 4.5, `${foreground} on ${background} must meet AA`);
 });
 

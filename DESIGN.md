@@ -2,7 +2,7 @@
 
 ## 1. Atmosphere & Identity
 
-A calm hardware-workbench terminal rendered as a 900-unit desktop or 360-unit mobile SVG instrument panel. The signature is a narrow green signal rail that anchors a dark or warm-paper surface while restrained gradients, one luminous data layer, and compact terminal chrome preserve the source composition without impersonating the upstream author's identity.
+A calm hardware-workbench terminal rendered as a 900-unit desktop or 360-unit mobile SVG instrument panel. The signature is a narrow green signal rail that anchors a dark or warm-paper surface while restrained gradients, green data accents, and compact terminal chrome preserve the source composition without impersonating the upstream author's identity.
 
 ## 2. Color
 
@@ -10,9 +10,8 @@ A calm hardware-workbench terminal rendered as a 900-unit desktop or 360-unit mo
 
 | Role | Token | Light | Dark | Usage |
 |---|---|---|---|---|
-| Surface primary | `surface` | `#fcfbf9` | `#0a0c10` | Card canvas |
+| Surface primary | `surface` | `#fcfbf9` | `#0a0c10` | Card canvas, including both profile sections |
 | Surface bar | `bar` | `#f5f2eb` | `#12151b` | Terminal title bar, pills |
-| Surface inset | `inset` | `#f0ead6` | `#0d1015` | Stats panel |
 | Text primary | `text` | `#1a1a1a` | `#e6edf3` | Names and values |
 | Text secondary | `muted` | `#57606a` | `#8b949e` | Body copy |
 | Text dim | `dim` | `#59636e` | `#7d8590` | Small labels and metadata |
@@ -23,7 +22,7 @@ A calm hardware-workbench terminal rendered as a 900-unit desktop or 360-unit mo
 | Accent calm | `accentSoft` | `#dcfce7` | `#0d2114` | Context pill fill |
 | Warning | `warning` | `#7a4d00` | `#d29922` | Unavailable-state text and marker |
 
-Rules: colors are emitted through each handler's theme token object only. `accent` is never used as small text in light mode; `accentText` provides AA-safe text contrast on surface, bar, inset, and accent-soft backgrounds. `dim` and `warning` are AA-safe on every declared dark or light surface, including the profile inset's translucent light composite. The fixed red, yellow, and green terminal controls are semantic terminal chrome, not profile status.
+Rules: colors are emitted through each handler's theme token object only. `accent` is never used as small text in light mode; `accentText` provides AA-safe text contrast on surface, bar, and accent-soft backgrounds. `dim` and `warning` are AA-safe on every declared dark or light surface. About and GitHub statistics share the same uninterrupted canvas in both themes and layouts; no translucent or separately tinted stats inset is used. The fixed red, yellow, and green terminal controls are semantic terminal chrome, not profile status.
 
 ## 3. Typography
 
@@ -79,7 +78,7 @@ The header's prompt cycles through factual focus lines with SMIL opacity at a 12
 
 ## 7. Depth & Surface
 
-Strategy: **mixed, border-led terminal material**. The header's left-to-right title-bar gradient and a low-opacity inset telemetry panel create depth; 0.5/1-unit rules preserve the crisp terminal boundary. The only glow is the dark-theme stat value and is reserved for live telemetry.
+Strategy: **quiet, border-led terminal material**. The header's left-to-right title-bar gradient and small accent-soft pills provide restrained depth; 0.5/1-unit rules preserve the crisp terminal boundary. Profile content sits on one continuous surface: its desktop columns are separated by a narrow fading signal divider, while mobile sections use whitespace and aligned heading rules. Green stat values establish hierarchy without a contrasting panel or glow.
 
 ## 8. Accessibility Constraints & Accepted Debt
 

@@ -24,8 +24,14 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v7
         with:
-          node-version: "24.19.0"
+          node-version: "24.22.2"
           cache: npm
+
+      - name: Install pinned npm
+        run: |
+          package_manager="$(node -p 'require("./package.json").packageManager')"
+          npm install --global "$package_manager"
+          test "npm@$(npm --version)" = "$package_manager"
 
       - name: Install dependencies
         run: npm ci
@@ -134,3 +140,13 @@ jobs:
       - name: Push generated assets
         if: steps.changes.outputs.changed == 'true'
         run: git push origin HEAD:main
+
+      - name: Preserve publication recovery workspace
+        if: failure()
+        uses: actions/upload-artifact@v7
+        with:
+          name: publication-recovery-${{ github.run_id }}-${{ github.run_attempt }}
+          path: .preview-publication.*/
+          include-hidden-files: true
+          if-no-files-found: ignore
+          retention-days: 7

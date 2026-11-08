@@ -1,13 +1,13 @@
 {
-  "$schema": "file:///D:/Dev/ProjectTools/devtools.schema.json",
+  "$schema": "file:///D:/Dev/Station/ProjectTools/devtools.schema.json",
   "schemaVersion": 1,
   "profile": "node-24",
   "workingDirectory": ".",
-  "packageManager": "npm@12.0.2",
+  "packageManager": "npm@11.19.0",
   "tools": {
     "node": {
-      "version": "24.19.0",
-      "path": "D:/Dev/Toolchains/JavaScript/Node/24.19.0/node.exe"
+      "version": "24.22.2",
+      "path": "D:/Dev/Toolchains/JavaScript/Node/24.22.2/node.exe"
     }
   },
   "requiredFiles": ["package.json", "scripts/generate-preview.mjs"],
